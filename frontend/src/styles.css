@@ -1,0 +1,20 @@
+:root{--bg:#f6f7fb;--card:#fff;--muted:#6b7280}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;margin:0;background:var(--bg);color:#111}
+.page{max-width:980px;margin:28px auto;padding:16px}
+.header{margin-bottom:12px}
+.header h1{margin:0;font-size:22px}
+.muted{color:var(--muted);font-size:13px}
+.card{background:var(--card);padding:14px;border-radius:10px;box-shadow:0 6px 18px rgba(17,24,39,0.03);margin-bottom:16px}
+.emails-list{display:flex;flex-direction:column;gap:12px}
+.email-card{border:1px solid #eef2f6;padding:12px;border-radius:8px;background:#fff}
+.email-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.subject{font-weight:600}
+.meta{font-size:13px;color:var(--muted)}
+.timeline{list-style:none;padding-left:12px;margin:8px 0}
+.timeline-item{display:flex;gap:8px;align-items:center;margin:6px 0}
+.dot{width:10px;height:10px;border-radius:50%;background:#0ea5a3}
+.hop-server{font-size:13px;color:#111}
+@media (max-width:600px){
+  .page{padding:10px}
+  .email-top{flex-direction:column;align-items:flex-start}
+}

@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  backend:
+    build: ./backend
+    working_dir: /app
+    command: npm run start:dev
+    environment:
+      - IMAP_HOST=${IMAP_HOST}
+      - IMAP_PORT=${IMAP_PORT}
+      - IMAP_USER=${IMAP_USER}
+      - IMAP_PASS=${IMAP_PASS}
+      - IMAP_SECURE=${IMAP_SECURE}
+      - MONGO_URI=mongodb://mongo:27017/emaildb
+      - TEST_EMAIL_ADDRESS=${TEST_EMAIL_ADDRESS}
+      - TEST_EMAIL_SUBJECT=${TEST_EMAIL_SUBJECT}
+    volumes:
+      - ./backend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+
+  frontend:
+    build: ./frontend
+    working_dir: /app
+    command: npm start
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
