@@ -205,9 +205,18 @@ export class ImapService implements OnModuleInit {
   }
 
   // API helper: get latest emails
-  async getLatest(limit = 20) {
-    return this.emailModel.find().sort({ createdAt: -1 }).limit(limit).lean().exec();
+    // API helper: get latest emails with pagination and optional esp filter
+  async getLatest(limit = 20, page = 1, esp?: string) {
+    const q: any = {};
+    if (esp && typeof esp === 'string' && esp.trim().length) {
+      q.esp = esp;
+    }
+    const skip = (page - 1) * limit;
+    const docs = await this.emailModel.find(q).sort({ createdAt: -1 }).skip(skip).limit(limit).lean().exec();
+    const total = await this.emailModel.countDocuments(q).exec();
+    return { items: docs, total, page, limit };
   }
+
 
   async getById(id: string) {
     return this.emailModel.findById(id).lean().exec();
