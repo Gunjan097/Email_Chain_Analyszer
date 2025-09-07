@@ -138,7 +138,12 @@ export class ImapService implements OnModuleInit {
   private searchForTestEmails() {
     // Build IMAP search criteria
     const subject = this.TEST_SUBJECT && this.TEST_SUBJECT.trim().length ? ['HEADER', 'SUBJECT', this.TEST_SUBJECT] : null;
-    const crit = subject ? ['UNSEEN', subject] : ['UNSEEN'];
+    // const crit = subject ? ['UNSEEN', subject] : ['UNSEEN'];
+   const crit = this.TEST_SUBJECT && this.TEST_SUBJECT.trim().length
+  ? ['UNSEEN', ['HEADER', 'SUBJECT', this.TEST_SUBJECT]]
+  : ['UNSEEN'];
+
+  this.logger.log(`Searching IMAP with criteria: ${JSON.stringify(crit)}`);
 
     this.imap.search(crit, (err, results) => {
       if (err) {
@@ -207,15 +212,24 @@ export class ImapService implements OnModuleInit {
   // API helper: get latest emails
     // API helper: get latest emails with pagination and optional esp filter
   async getLatest(limit = 20, page = 1, esp?: string) {
-    const q: any = {};
-    if (esp && typeof esp === 'string' && esp.trim().length) {
-      q.esp = esp;
-    }
-    const skip = (page - 1) * limit;
-    const docs = await this.emailModel.find(q).sort({ createdAt: -1 }).skip(skip).limit(limit).lean().exec();
-    const total = await this.emailModel.countDocuments(q).exec();
-    return { items: docs, total, page, limit };
+  const q: any = {};
+
+  // Always filter by test subject if set
+  if (this.TEST_SUBJECT && this.TEST_SUBJECT.trim().length) {
+    q.subject = this.TEST_SUBJECT;
   }
+
+  // Optionally filter by ESP
+  if (esp && typeof esp === 'string' && esp.trim().length) {
+    q.esp = esp;
+  }
+
+  const skip = (page - 1) * limit;
+  const docs = await this.emailModel.find(q).sort({ createdAt: -1 }).skip(skip).limit(limit).lean().exec();
+  const total = await this.emailModel.countDocuments(q).exec();
+  return { items: docs, total, page, limit };
+}
+
 
 
   async getById(id: string) {
