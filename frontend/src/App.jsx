@@ -39,10 +39,12 @@ export default function App() {
   const [page, setPage] = useState(1);
   const limit = 20;
   const [total, setTotal] = useState(0);
+  const API_BASE_URL = process.env.REACT_APP_API_BASE || '';
+
 
   const fetchConfig = async () => {
     try {
-      const res = await axios.get('/api/emails/test-config');
+      const res = await axios.get(`${API_BASE_URL}/api/emails/test-config`);
       setConfig(res.data);
     } catch (e) {
       console.error(e);
@@ -52,8 +54,8 @@ export default function App() {
   const fetchEmails = async (p = 1, esp = '') => {
     setLoading(true);
     try {
-      const url = `/api/emails?limit=${limit}&page=${p}${esp ? `&esp=${encodeURIComponent(esp)}` : ''}`;
-      const res = await axios.get(url);
+       const url = `${API_BASE_URL}/api/emails?limit=${limit}&page=${p}${esp ? `&esp=${encodeURIComponent(esp)}` : ''}`;
+    const res = await axios.get(url);
       setEmails(res.data.items || []);
       setTotal(res.data.total || 0);
       setPage(res.data.page || 1);
