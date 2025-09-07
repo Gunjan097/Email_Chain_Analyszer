@@ -8,7 +8,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api'); 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: ''https://email-chain-analyszer.vercel.app',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
